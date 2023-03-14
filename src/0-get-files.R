@@ -3,11 +3,9 @@
 # aru-qpad
 # 00-get-files.R
 # Created February 2023
-# Last Updated February 2023
+# Last Updated March 2023
 
 ####### Import Libraries and External Files #######
-
-library(magrittr)
 
 ####### Set Constants #############################
 
@@ -20,9 +18,14 @@ aru_path <- "E:/aru-data/"
 
 tags <- read.csv("data/raw/wildtrax_tags.csv"); names(tags)[1] <- "location"
 
-####### Main Code #################################
+if (file.exists("data/generated/filenames_wac.csv"))
+{
+  filenames <- as.vector(read.csv(file = "data/generated/filenames_wac.csv", header = FALSE)[,1])
+}else{
+  filenames <- vector(mode = "character", length = 0)
+}
 
-filenames <- vector(mode = "character", length = 0)
+####### Main Code #################################
 
 for (i in 1:nrow(tags))
 {
@@ -35,23 +38,40 @@ for (i in 1:nrow(tags))
   {
     proj_path <- paste0(aru_path, proj, "/2017/V1/",
                         proj, "-", tokens[2], "-", tokens[3])
+    
+    array_dirs <- list.files(proj_path)
+    if (!any(array_dirs == loc))
+    {
+      message(paste0("Could not find ", loc, " in ", proj_path, ".\n"))
+      next
+    }
+    date_string <- gsub(" ", "$", tags$recordingDate[i])
+    date_string <- gsub("-", "", date_string)
+    date_string <- gsub(":", "", date_string)
+    date_string <- sub('.', '', date_string)
+    
+    for (d in array_dirs)
+    {
+      recording_file <- paste0(proj_path, "/", d, "/", d, "_0+1_", date_string, ".wac")
+      if (isFALSE(file.exists(recording_file)))
+      {
+        message(paste0("Could not find file ", recording_file))
+      }
+      if (isFALSE(recording_file %in% filenames))
+      {
+        filenames <- c(filenames, recording_file)
+      }
+    }
+    
   }
-  array_dirs <- list.files(proj_path)
-  if (!any(array_dirs == loc))
-  {
-    message(paste0("Could not find ", loc, " in ", proj_path, ".\n"))
-    next
-  }
-  date_string <- gsub(" ", "$", tags$recordingDate[i])
-  date_string <- gsub("-", "", date_string)
-  date_string <- gsub(":", "", date_string)
-  date_string <- sub('.', '', date_string)
   
-  recording_file <- paste0(proj_path, "-", tokens[4], "/",
-                           loc, "_0+1_", date_string, ".wac")
-  
-  system(paste0("src/wac2wav/wac2wav.exe ", recording_file,
-                " data/generated/test.wav"))
+  #Commenting this line of code out to save for later
+  # system(paste0("src/wac2wav/wac2wav.exe ", recording_file,
+  #               " data/generated/test.wav"))
 }
 
 ####### Output ####################################
+
+write.table(data.frame(f = filenames),
+            file = "data/generated/filenames_wac.csv",
+            col.names = FALSE, row.names = FALSE, sep = ",")
