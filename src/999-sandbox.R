@@ -3,7 +3,7 @@
 # aru-qpad
 # 999-sandbox.R
 # Created October 2022
-# Last Updated October 2022
+# Last Updated January 2023
 
 ####### Import Libraries and External Files #######
 
@@ -11,7 +11,6 @@ library(locaR) # currently not on CRAN
 library(sf)
 library(proj4)
 library(ggplot2)
-library(ggmap)
 
 ####### Read Data #################################
 
@@ -23,7 +22,7 @@ tags <- read.csv("data/raw/wildtrax_tags.csv")
 # Testing out plotting the locations of the stations
 # Take just the first 50 locations, I'm pretty sure they are part of the same grid?
 
-locs_red <- locs[1:25,]
+locs_red <- locs[810:824,]
 # Convert UTM to Lat Lon 
 zone <- locs_red$Zone[1]
 
