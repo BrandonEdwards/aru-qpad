@@ -19,11 +19,10 @@ if (file.exists("data/generated/filenames_wav.csv"))
   wav_files <- vector(mode = "character", length = 0)
 }
 
-
 ####### Main Code #################################
 
 i <- 1
-for (f in wac_files)
+for (f in wac_files[1:5])
 {
   print(paste0(i, "/", length(wac_files)))
   output_file <- gsub('.{1}$', 'v', f)
@@ -34,6 +33,8 @@ for (f in wac_files)
   system(paste0("src/functions/wac2wav.exe ", f,
                 " ",
                 output_file))
+  wav_files <- c(wav_files, output_file)
+  i <- i + 1
 }
 
 ####### Output ####################################

@@ -7,12 +7,23 @@
 
 ####### Import Libraries and External Files #######
 
+# Get command line arguments
+#!/usr/bin/env Rscript
+args <- commandArgs(trailingOnly=TRUE)
+
 ####### Set Constants #############################
 
 #' Definitely not my preferred way of doing things, but
 #' because the data are huge, and more or less need to live
 #' on a hard drive, I have to hard code some data paths
-aru_path <- "/media/bedwards144/Seagate Expansion Drive/aru-data"
+
+if (length(args) == 0)
+{
+  aru_path <- "E:/aru-data/"
+}else
+{
+  aru_path <- args[1]
+}
 
 ####### Read Data #################################
 
