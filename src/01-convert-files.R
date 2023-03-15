@@ -22,8 +22,10 @@ if (file.exists("data/generated/filenames_wav.csv"))
 
 ####### Main Code #################################
 
+i <- 1
 for (f in wac_files)
 {
+  print(paste0(i, "/", length(wac_files)))
   output_file <- gsub('.{1}$', 'v', f)
   if (file.exists(output_file))
   {
@@ -37,5 +39,5 @@ for (f in wac_files)
 ####### Output ####################################
 
 write.table(data.frame(f = filenames),
-            file = "data/generated/filenames.csv",
+            file = "data/generated/filenames_wav.csv",
             col.names = FALSE, row.names = FALSE, sep = ",")

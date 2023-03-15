@@ -12,7 +12,7 @@
 #' Definitely not my preferred way of doing things, but
 #' because the data are huge, and more or less need to live
 #' on a hard drive, I have to hard code some data paths
-aru_path <- "E:/aru-data/"
+aru_path <- "/media/bedwards144/Seagate Expansion Drive/aru-data"
 
 ####### Read Data #################################
 
