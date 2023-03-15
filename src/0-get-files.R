@@ -24,7 +24,7 @@ if (length(args) == 0)
 {
   aru_path <- args[1]
 }
-
+print(aru_path)
 ####### Read Data #################################
 
 tags <- read.csv("data/raw/wildtrax_tags.csv"); names(tags)[1] <- "location"
