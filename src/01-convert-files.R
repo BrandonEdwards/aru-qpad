@@ -22,24 +22,26 @@ if (file.exists("data/generated/filenames_wav.csv"))
 ####### Main Code #################################
 
 i <- 1
-for (f in wac_files[1:10])
+for (f in wac_files)
 {
   print(paste0(i, "/", length(wac_files)))
   output_file <- gsub('.{1}$', 'v', f)
-  if (file.exists(output_file))
+  output_file_sanitized <- gsub("\\$", "\\\\$", output_file)
+  f_sanitized <- gsub("\\$", "\\\\$", f)
+  if (output_file %in% wav_files)
   {
     i <- i + 1
     next
   }
-  system(paste0("src/functions/wac2wav.exe ", f,
+
+  system(paste0("src/functions/wac2wav.exe ", f_sanitized,
                 " ",
-                output_file))
+                output_file_sanitized))
   wav_files <- c(wav_files, output_file)
-  i <- i + 1
-}
 
-####### Output ####################################
-
-write.table(data.frame(f = wav_files),
+  write.table(data.frame(f = wav_files),
             file = "data/generated/filenames_wav.csv",
             col.names = FALSE, row.names = FALSE, sep = ",")
+
+  i <- i + 1
+}
