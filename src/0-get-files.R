@@ -29,14 +29,21 @@ print(aru_path)
 
 tags <- read.csv("data/raw/wildtrax_tags.csv"); names(tags)[1] <- "location"
 
-if (file.exists("data/generated/filenames_wac.csv"))
-{
-  filenames <- as.vector(read.csv(file = "data/generated/filenames_wac.csv", header = FALSE)[,1])
-}else{
-  filenames <- vector(mode = "character", length = 0)
-}
+# Undecided if I want to keep this so just commenting out for now
+# if (file.exists("data/generated/filenames_wac.csv"))
+# {
+#   filenames <- as.vector(read.csv(file = "data/generated/filenames_wac.csv", header = FALSE)[,1])
+# }else{
+#   filenames <- vector(mode = "character", length = 0)
+# }
+
+filenames <- vector(mode = "character", length = 0)
+dir_keys <- vector(mode = "character", length = 0)
 
 ####### Main Code #################################
+
+# Add a column to the tags list to match tags with filenames
+tags$dir_key <- paste0(tags$location, "-", tags$recordingDate)
 
 for (i in 1:nrow(tags))
 {
@@ -71,6 +78,7 @@ for (i in 1:nrow(tags))
       if (isFALSE(recording_file %in% filenames))
       {
         filenames <- c(filenames, recording_file)
+        dir_keys <- c(dir_keys, tags$dir_key[i])
       }
     }
     
@@ -83,6 +91,6 @@ for (i in 1:nrow(tags))
 
 ####### Output ####################################
 
-write.table(data.frame(f = filenames),
+write.table(data.frame(File = filenames, Key = dir_keys),
             file = "data/generated/filenames_wac.csv",
-            col.names = FALSE, row.names = FALSE, sep = ",")
+            row.names = FALSE, sep = ",")
