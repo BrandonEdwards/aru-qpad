@@ -13,7 +13,7 @@ library(ggplot2)
 
 ####### Read Data #################################
 
-tags <- read.csv("data/raw/wildtrax_tags.csv"); names(tags)[1] <- "location"
+tags <- read.csv("data/generated/tags.csv")
 stations <- read.csv("data/raw/station_locs.csv")
 
 ####### Main Code #################################

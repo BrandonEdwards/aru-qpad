@@ -13,8 +13,8 @@ library(seewave)
 
 ####### Read Data #################################
 
-filenames <- as.vector(read.csv("data/generated/filenames_wav.csv", header = FALSE)[,1])
-tags <- read.csv("data/raw/wildtrax_tags.csv"); names(tags)[1] <- "location"
+filenames <- read.csv("data/generated/filenames_wav.csv")
+tags <- read.csv("data/generated/tags.csv")
 
 ####### Main Code #################################
 

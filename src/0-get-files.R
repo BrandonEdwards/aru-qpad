@@ -94,3 +94,6 @@ for (i in 1:nrow(tags))
 write.table(data.frame(File = filenames, Key = dir_keys),
             file = "data/generated/filenames_wac.csv",
             row.names = FALSE, sep = ",")
+
+write.table(tags, file = "data/generated/tags.csv",
+            row.names = FALSE, sep = ",")
