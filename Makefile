@@ -1,4 +1,4 @@
-DIR="../../../../media/bedwards144/phd-data/aru-data/"
+DIR="/media/brandon/phd-data/aru-data/"
 
 analysis: wac2wav file-conversion
 

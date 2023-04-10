@@ -3,7 +3,7 @@
 # aru-qpad
 # 03-generate-detections.R
 # Created March 2023
-# Last Updated March 2023
+# Last Updated April 2023
 
 ####### Import Libraries and External Files #######
 
@@ -17,8 +17,7 @@ filenames <- read.csv("data/generated/filenames_wav.csv")
 tags <- read.csv("data/generated/tags.csv")
 
 ####### Main Code #################################
-
-# Add array name column to tags
+# Add array name column to tags (may not need this)
 tags$array_name <- NULL
 for (i in 1:nrow(tags))
 {
@@ -31,6 +30,34 @@ for (i in 1:nrow(tags))
     tags$array_name[i] <- paste0(tokens[1], "-", tokens[2], "-", tokens[3])
   }
 }
+
+for (i in 1:nrow(tags))
+{
+  files <- filenames[which(filenames$Key == tags$dir_key[i]),]
+  
+  sounds <- vector(mode = "list", length = nrow(files))
+  names(sounds) <- files$File
+  j <- 1
+  for (s in names(sounds))
+  {
+    Fs <- tuneR::readWave(filename = s, header = TRUE)$sample.rate
+    sounds[[s]] <- tuneR::readWave(filename = s,
+                                   from = tags$startTime[i],
+                                   to = tags$startTime[i] + tags$tagLength[i],
+                                   units = "seconds")@left
+    png(paste0("data/generated/spectrograms/", j, ".png"))
+    spectro(wave = sounds[[s]], f = Fs)
+    dev.off()
+    j <- j + 1
+  }
+  
+}
+
+
+
+
+
+
 
 # Get list of mic locations for each project
 mic_locations <- vector(mode = "list", length = length(unique(tags$array_name)))
@@ -57,22 +84,7 @@ for (m in names(mic_locations))
   mic_matrix[[m]] <- temp_matrix
 }
 
-for (i in 1:nrow(tags))
-{
-  files <- filenames[which(grepl(tags$array[i], filenames, fixed = TRUE))]
 
-  sounds <- vector(mode = "list", length = nrow(mic_locations[[tags$array_name[i]]]))
-  names(sounds) <- paste0(substr(mic_locations[[tags$array_name[i]]]$Station, 1, 4),
-                          substr(mic_locations[[tags$array_name[i]]]$Station, 6, 
-                                 nchar(mic_locations[[tags$array_name[i]]]$Station)))
-  
-  for (s in names(sounds))
-  {
-    # This doesn't work, I need a way to just cross-reference tags to the appropriate file names
-    sounds[[s]] <- tuneR::readWave(filename = files[which(grepl(s, files, fixed = TRUE))])
-  }
-  
-}
 
 
 
