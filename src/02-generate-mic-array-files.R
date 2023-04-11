@@ -7,9 +7,10 @@
 
 ####### Import Libraries and External Files #######
 
-library(sf)
+#library(sf)
 library(proj4)
 library(ggplot2)
+library(stringi)
 
 ####### Read Data #################################
 
@@ -18,9 +19,6 @@ stations <- read.csv("data/raw/station_locs.csv")
 
 ####### Main Code #################################
 
-# Create file list for each project's coordinates and mic locations
-coords_filenames <- data.frame(project = unique(tags$array_name),
-                               filename = NA)
 i <- 1
 for (p in unique(tags$array_name))
 {
@@ -42,7 +40,7 @@ for (p in unique(tags$array_name))
                                 inverse = TRUE)
     lat_lon <- data.frame(lat = projected$y, lon = projected$x)
     
-    lat_lon<- cbind(lat_lon, Station = coords$Station)
+    lat_lon <- cbind(lat_lon, Station = coords$Station)
     
     # Write the coordinates file
     f_coords <- paste0("data/generated/mic_coordinates/", p, ".csv")
@@ -55,6 +53,13 @@ for (p in unique(tags$array_name))
     coords_matrix <- coords
     coords_matrix$Y <- NA
     coords_matrix$X <- NA
+    #' Because of mismatches in file naming conventions, we need a separate
+    #' station name entry that does not have padded zeroes. Ugh.
+    stations_nonpadded <- paste0(rep(p, times = nrow(coords)),
+                                 "-",
+                                 seq(1, nrow(coords)))
+    coords_matrix$Station_Nonpadded <- stations_nonpadded
+    
     write.table(coords_matrix, file = f_loc_csv,
                 row.names = FALSE, sep = ",")
     
