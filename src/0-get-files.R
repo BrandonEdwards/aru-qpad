@@ -3,7 +3,7 @@
 # aru-qpad
 # 00-get-files.R
 # Created February 2023
-# Last Updated March 2023
+# Last Updated April 2023
 
 ####### Import Libraries and External Files #######
 
@@ -44,6 +44,20 @@ dir_keys <- vector(mode = "character", length = 0)
 
 # Add a column to the tags list to match tags with filenames
 tags$dir_key <- paste0(tags$location, "-", tags$recordingDate)
+
+# Add array name column to tags
+tags$array_name <- NULL
+for (i in 1:nrow(tags))
+{
+  loc <- tags$location[i]
+  tokens <- unlist(strsplit(loc, "-"))
+  proj <- tokens[1]
+  
+  if (proj == "SBL")
+  {
+    tags$array_name[i] <- paste0(tokens[1], "-", tokens[2], "-", tokens[3])
+  }
+}
 
 for (i in 1:nrow(tags))
 {

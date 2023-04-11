@@ -3,7 +3,7 @@
 # aru-qpad
 # 02-generate-mic-array_files.R
 # Created March 2023
-# Last Updated March 2023
+# Last Updated April 2023
 
 ####### Import Libraries and External Files #######
 
@@ -17,20 +17,6 @@ tags <- read.csv("data/generated/tags.csv")
 stations <- read.csv("data/raw/station_locs.csv")
 
 ####### Main Code #################################
-
-# Add array name column to tags
-tags$array_name <- NULL
-for (i in 1:nrow(tags))
-{
-  loc <- tags$location[i]
-  tokens <- unlist(strsplit(loc, "-"))
-  proj <- tokens[1]
-  
-  if (proj == "SBL")
-  {
-    tags$array_name[i] <- paste0(tokens[1], "-", tokens[2], "-", tokens[3])
-  }
-}
 
 # Create file list for each project's coordinates and mic locations
 coords_filenames <- data.frame(project = unique(tags$array_name),
