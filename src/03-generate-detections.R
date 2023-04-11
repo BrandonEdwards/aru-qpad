@@ -10,6 +10,7 @@
 library(locaR)
 library(tuneR)
 library(seewave)
+library(ggplot2)
 
 ####### Read Data #################################
 
@@ -17,36 +18,53 @@ filenames <- read.csv("data/generated/filenames_wav.csv")
 tags <- read.csv("data/generated/tags.csv")
 
 ####### Main Code #################################
-# Add array name column to tags (may not need this)
-tags$array_name <- NULL
-for (i in 1:nrow(tags))
-{
-  loc <- tags$location[i]
-  tokens <- unlist(strsplit(loc, "-"))
-  proj <- tokens[1]
-  
-  if (proj == "SBL")
-  {
-    tags$array_name[i] <- paste0(tokens[1], "-", tokens[2], "-", tokens[3])
-  }
-}
 
 for (i in 1:nrow(tags))
 {
+  mic_locations <- read.csv(paste0("data/generated/mic_locations/completed/",
+                                   tags$array_name[i],
+                                   ".csv"))
   files <- filenames[which(filenames$Key == tags$dir_key[i]),]
   
   sounds <- vector(mode = "list", length = nrow(files))
   names(sounds) <- files$File
+  
+  spec_plots <- vector(mode = "list", length = nrow(files))
+  names(spec_plots) <- files$File
+  
   j <- 1
   for (s in names(sounds))
   {
+    sounds[[s]] <- tryCatch(
+      {
+        tuneR::readWave(filename = s,
+                        from = tags$startTime[i],
+                        to = tags$startTime[i] + tags$tagLength[i],
+                        units = "seconds")@left
+      },
+      error = function(e) {
+        message(e)
+        return(list(NULL))
+      }
+    )
+    # sounds[[s]] <- tuneR::readWave(filename = s,
+    #                                from = tags$startTime[i],
+    #                                to = tags$startTime[i] + tags$tagLength[i],
+    #                                units = "seconds")@left
+    if (length(sounds[[s]]) == 1)
+      next
+    
     Fs <- tuneR::readWave(filename = s, header = TRUE)$sample.rate
-    sounds[[s]] <- tuneR::readWave(filename = s,
-                                   from = tags$startTime[i],
-                                   to = tags$startTime[i] + tags$tagLength[i],
-                                   units = "seconds")@left
     png(paste0("data/generated/spectrograms/", j, ".png"))
-    spectro(wave = sounds[[s]], f = Fs)
+    
+    spec_plot <- ggspectro(sounds[[s]], ovlp = 50, f = Fs) +
+      stat_contour(geom="polygon", aes(fill=..level..), bins=30) +
+      scale_fill_continuous(name="Amplitude\n(dB)\n", limits=c(-30,0), na.value="transparent") +#, low="white", high="black") +
+      #theme_bw() +
+      NULL
+    
+    #spectro(wave = sounds[[s]], f = Fs)
+    print(spec_plot)
     dev.off()
     j <- j + 1
   }
@@ -54,7 +72,7 @@ for (i in 1:nrow(tags))
 }
 
 
-
+# need to test for lengths=0 to account for null list entries!!
 
 
 
