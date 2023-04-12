@@ -1,4 +1,5 @@
 DIR="/media/brandon/phd-data/aru-data/"
+CORES=15
 
 analysis: wac2wav file-conversion
 
@@ -9,6 +10,9 @@ get-files:
 
 convert-files:
 	Rscript src/01-convert-files.R
+
+spectrograms: data/generated/filenames_wav.csv data/generated/tags.csv
+	Rscript src/03-generate-spectrograms.R $(CORES)
 
 wac2wav: includes/wac2wav/wac2wav.c
 	gcc -o src/functions/wac2wav.exe includes/wac2wav/wac2wav.c
