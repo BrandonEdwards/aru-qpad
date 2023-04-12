@@ -39,6 +39,7 @@ tags <- read.csv("data/raw/wildtrax_tags.csv"); names(tags)[1] <- "location"
 
 filenames <- vector(mode = "character", length = 0)
 dir_keys <- vector(mode = "character", length = 0)
+stations <- vector(mode = "character", length = 0)
 
 ####### Main Code #################################
 
@@ -93,6 +94,7 @@ for (i in 1:nrow(tags))
       {
         filenames <- c(filenames, recording_file)
         dir_keys <- c(dir_keys, tags$dir_key[i])
+        stations <- c(stations, d)
       }
     }
     
@@ -105,7 +107,7 @@ for (i in 1:nrow(tags))
 
 ####### Output ####################################
 
-write.table(data.frame(File = filenames, Key = dir_keys),
+write.table(data.frame(File = filenames, Key = dir_keys, Station = stations),
             file = "data/generated/filenames_wac.csv",
             row.names = FALSE, sep = ",")
 

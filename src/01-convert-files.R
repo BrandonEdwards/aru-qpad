@@ -3,7 +3,7 @@
 # aru-qpad
 # 01-convert-files.R
 # Created March 2023
-# Last Updated March 2023
+# Last Updated April 2023
 
 ####### Import Libraries and External Files #######
 
@@ -21,6 +21,8 @@ wac_df <- read.csv(file = "data/generated/filenames_wac.csv")
 # }
 wav_files <- vector(mode = "character", length = 0)
 dir_keys <- vector(mode = "character", length = 0)
+stations <- vector(mode = "character", length = 0)
+
 ####### Main Code #################################
 
 i <- 1
@@ -42,9 +44,10 @@ for (f in wac_files)
                 output_file_sanitized))
   wav_files <- c(wav_files, output_file)
   dir_keys <- c(dir_keys, wac_df$Key[i])
+  stations <- c(stations, wac_df$Station[i])
   
 
-  write.table(data.frame(File = wav_files, Key = dir_keys),
+  write.table(data.frame(File = wav_files, Key = dir_keys, Station = stations),
             file = "data/generated/filenames_wav.csv",
             row.names = FALSE, sep = ",")
 
