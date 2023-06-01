@@ -1,7 +1,15 @@
-\documentclass[]{article}
+\documentclass[12pt]{article}
+
+\usepackage{setspace}
+\onehalfspacing
 
 \usepackage{natbib}
-\bibliographystyle{unsrtnat}
+\bibliographystyle{apalike}
+
+\usepackage[margin=1.0in]{geometry}
+
+\usepackage{lineno}
+\linenumbers
 
 %opening
 \title{Estimating landbird detection probabilities from autonomous recording unit data}
@@ -32,7 +40,53 @@ The NA-POPS project is an initiative to estimate detection probabilities for all
 \end{abstract}
 
 \section{Introduction}
-Detectability is an important metric for estimating density of animals \citep{solymos_lessons_2020}, 
+\par Detectability is an important metric for estimating density of animals \citep{solymos_lessons_2020}, correcting for biases in biological surveys \citep{solymos_calibrating_2013}, and for making conservation decisions surrounding when to monitor and when to act \citep{bennett_how_nodate}. In landbirds, detection probabilities can be thought of as the product of a bird's availability, which is the probability that the bird gives a cue during a survey, and the bird's perceptibility, which is the probability that an observer will detect a cue \citep{buckland_distance_2015}. These two components of detectability can be estimated for most bird species if bird surveys employ certain survey protocols. Availability can be estimated with surveys making use of removal sampling techniques \citep{farnsworth_removal_2002}, and perceptibility can be estimated by surveys that make use of distance sampling techniques \citep{buckland_introduction_2001, buckland_distance_2015}. More recently, the QPAD method developed by \cite{solymos_calibrating_2013} allows for availability and perceptibility to be estimated jointly using data harmonization techniques \citep{barker_ecological_2015} that allow for several methods of removal sampling or distance sampling to be considered together. 
 
+\par The NA-POPS project is a collaborative effort across North America to develop an open-access database of detectability estimates for every North American landbird species \citep{edwards_point_2023}. To date, NA-POPS has calculated detectability estimates for nearly 75\% of all North American landbirds using data from over 200 projects across the continent. 
+
+\par Although the current NA-POPS database only considers data that are collected via traditional point counts, the use of autonomous recording units (ARUs) for bird monitoring is becoming more widely-used \citep{perezgranados_estimating_2021, shonfield_autonomous_2017, sugai_terrestrial_2019}. ARUs provide the ability to survey in highly remote areas that may be otherwise less accessible for traditional human-collected data. Additionally, ARUs provide the ability to easily monitor across multiple days in the same area, because the ARUs can be programmed to start and stop monitoring each day. Because of this, ARUs effectively provide an archived record of the entire soundscape in a given area, which can be used to fill data gaps for many data-scarce species.
+
+Despite these benefits, the use of ARUs for estimating detectability does have some challenges. The main challenge is being able to estimate distance to the bird, which is a crucial component of being able to estimate the perceptibility of a bird species \citep{buckland_distance_2015}. With human monitoring, distance to the bird can be either estimated visually or determined exactly using laser rangefinders. However, ARUs do not have that ability, because they are only collecting sound. 
+
+There do, however, exist some new methodologies to estimate distance to a singing bird with ARUs. One possible way of estimating distances is by using relative sound level \citep{sebastian-gonzalez_density_2018, yip_sound_2017}. By analyzing the spectrogram of a sound recording, the distance to the bird can be estimated by accounting for the loudness of the sound, calibrated against known distances. This is because the loudness of a sound decreases with distance to the observer according to the inverse square law. While this method can give a coarse measure of distance, it is more repeatable and accurate than humans and can be used with any ARU \citep{yip_sound_2020}. This technique can be combined with localization techniques described in \cite{hedley_direction--arrival_2017} to determine the direction-of-arrival of a bird song. In other words, bird songs recorded through ARUs can now have a distance estimation and location estimate attached to them, meaning that ARU counts can roughly be converted into what a traditional point count data sheet would look like, but with much more auxiliary information. 
+
+The growing database of ARU data that exist on ABMI’s WildTrax website (https://wildtrax.ca) provides a unique opportunity for NA-POPS to expand the scope of species detectability by making use of these freely available data. One previous study laid the groundwork in detectability estimates using ARUs by generating an offset term that offset detectability estimates generated from human point counts \citep{van_wilgenburg_paired_2017}. However, by applying sound pressure level and localization techniques to ARU counts that provide that data, the ARU counts can be converted into an estimate of a traditional point count, with time to first detection and estimated distance attached to each bird in the point count. These are exactly the ancillary data needed to apply the QPAD methodology to the data to estimate additional detectability estimates. 
+
+In this paper, we describe a workflow to estimate detection distances from ARU data, in order to then estimate detection probabilities in landbirds. We first compiled hundreds of ARU recordings from several grids of ARUs across Alberta for use with localization techniques, which allowed us to estimate where within the ARU grid a bird was singing. From this localization, we were then able to measure the distance from the bird to each of the recorders that recorded the bird. Finally, we created sound pressure level curves for $N$ (need to figure this out still) species, which allowed us to estimate distances from single ARU recorders.
+
+\section{Methods}
+\subsection{Data Acquisition}
+
+\begin{itemize}
+	\item obtained recording data from Bioacoustic Units grid projects across Alberta (figure showing locations of grids?)
+	\item obtained detection tags from WildTrax that included start and end times of known species
+	\item extracted clips of bird song from each aru in a grid
+\end{itemize}
+
+\subsection{Localization}
+
+\begin{itemize}
+	\item for each detection from WildTrax, generated array of spectrogram for the corresponding grid
+	\item from each spectrogram array, chose 6 recordings that appeared to be the convex hull around where we thought the bird would be singing
+	\item created a "detections" sheet that contained referenced recordings as well as locations of those sound recording units
+	\item used the R package 'locaR' (CITE) to estimate where in space a singing bird is
+\end{itemize}
+
+\subsection{Sound Pressure Levels}
+
+In progress...
+
+\subsection{Estimates of Detectability}
+
+In progress...
+
+\section{Results}
+
+
+
+\section{Parking Lot}
+Long-term bird surveys such as the North American Breeding Bird Survey (BBS) provide the current gold-standard of bird monitoring and trend estimation, with over 50 years of bird data being collected by volunteers across the continent (Hudson et al., 2017). However, as a roadside survey, the BBS has poor coverage where there are few roads, such as the northern boreal regions of Canada. Possibilities exist to fill these gaps by using data available through other monitoring programs such as the Boreal Avian Modelling (BAM) project (Cumming et al., 2010). Integrating these data into a single modelling framework could fill spatial gaps and address limitations with BBS data and analyses. 
+
+However, bird count datasets that are collected using different survey methods are essentially “speaking a different language”, because differences in bird survey protocols affect the detectability of birds. In general, the probability of detecting a bird depends on the product of a bird’s availability (i.e., probability the bird is present at a survey site and singing) and the bird’s perceptibility (i.e., probability the observer perceives a cue that a bird is giving; (Johnson, 2008)). Factors that can affect the availability of birds include time of year of a survey, time of day of a survey (Wilson and Bart, 1985), and survey duration (Alldredge et al., 2007); factors that can affect the perceptibility of birds include vegetation type (Sólymos et al., 2013; Yip et al., 2017), proximity to roads (Cooke et al., 2020; Yip et al., 2017), and distance from which birds are singing (Buckland et al., 2015). Because these factors vary between surveys, and because most surveys differ in protocol (e.g., different survey length, maximum survey distance, etc.), data collected from disparate surveys cannot directly be integrated without first accounting for detectability (Isaac et al., 2020; Miller et al., 2021). 
 \bibliography{refs}
 \end{document}
