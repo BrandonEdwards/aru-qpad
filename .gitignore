@@ -65,3 +65,6 @@ vignettes/*.pdf
 *.url
 *.svn
 *.toc
+
+# python virtual environment
+env/
