@@ -68,3 +68,6 @@ vignettes/*.pdf
 
 # python virtual environment
 env/
+
+# we definitely want to ignore that big ARU directory...
+data/raw/aru*
