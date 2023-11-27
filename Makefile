@@ -1,4 +1,4 @@
-DIR="/media/brandon/phd-data/aru-data/"
+DIR="/home/brandon/Documents/chapter-3/aru-qpad/data/raw/aru"
 CORES=15
 
 analysis: wac2wav file-conversion
@@ -27,6 +27,9 @@ clean-wav:
 
 clean-wac:
 	rm data/generated/filenames_wac.csv
+
+aru-data:
+	sudo mount $(DIR)
 
 .FORCE:
 	
