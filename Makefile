@@ -1,5 +1,22 @@
+OBJ = obj/main.o
 DIR="/home/brandon/Documents/chapter-3/aru-qpad/data/raw/aru"
 CORES=15
+CC = gcc
+
+all: localize
+
+localize: $(OBJ)
+	$(CC) $(OBJ) -o localize
+
+obj/main.o: src/main.c
+	$(CC) -c -o obj/main.o src/main.c
+
+
+
+
+
+
+
 
 analysis: wac2wav file-conversion
 
