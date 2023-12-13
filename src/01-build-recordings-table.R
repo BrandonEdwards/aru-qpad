@@ -169,11 +169,15 @@ kirb_out$File <- substr(kirb_files[,1], start = 4, stop = nchar(kirb_files[,1]))
 # Reformat station names to match station locations table/file
 station <- sapply(strsplit(kirb_out$File, split = "/"),
                   `[`, 
-                  6)
+                  7)
 station_toks <- strsplit(station, split = "-")
 kirb_out$Station <- paste0(sapply(station_toks, `[`, 1), "-",
                           formatC(as.integer(sapply(station_toks, `[`, 2)),
                                   width = 3, 
+                                  format = "d", 
+                                  flag = "0"), "-",
+                          formatC(as.integer(sapply(station_toks, `[`, 3)),
+                                  width = 2, 
                                   format = "d", 
                                   flag = "0"))
 
