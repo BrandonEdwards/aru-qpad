@@ -7,9 +7,6 @@
 
 ####### Import Libraries and External Files #######
 
-library(DBI)
-library(RSQLite)
-
 ####### Read Data #################################
 
 station_locs <- read.csv(file = "data/raw/station_locs.csv")
@@ -25,11 +22,6 @@ sl_red_reordered <- sl_red[, c("Project", "Site", "Station", "Zone", "Easting", 
 
 ####### Output ####################################
 
-# Create a connection to a database
-db <- DBI::dbConnect(RSQLite::SQLite(),
-                     "data/generated/localization.db")
-DBI::dbWriteTable(conn = db,
-                  name = "stations",
-                  value = sl_red_reordered,
-                  overwrite = TRUE)
-dbDisconnect(conn = db)
+write.table(sl_red_reordered,
+            file = "data/generated/stations.csv",
+            row.names = FALSE, sep = ",")
