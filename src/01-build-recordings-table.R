@@ -7,6 +7,9 @@
 
 ####### Import Libraries and External Files #######
 
+library(DBI)
+library(RSQLite)
+
 ####### Read Data #################################
 
 if (!file.exists("data/raw/KIRBfilelist.csv"))
@@ -202,6 +205,10 @@ kirb_out$Date <- as.POSIXct(paste0(date, time),
 
 ####### Output ####################################
 
-write.table(x = rbind(sbt_out, sbl_out, kirb_out),
-            file = "data/generated/recordings.csv",
-            sep = ",", row.names = FALSE)
+db <- DBI::dbConnect(RSQLite::SQLite(),
+                     "data/generated/recordings.db")
+DBI::dbWriteTable(conn = db,
+                  name = "recordings",
+                  value = rbind(sbt_out, sbl_out, kirb_out),
+                  overwrite = TRUE)
+dbDisconnect(conn = db)
