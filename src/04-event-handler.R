@@ -1,7 +1,7 @@
 ####### Script Information ########################
 # Brandon P.M. Edwards
 # aru-qpad
-# src/04-convert-detect-localize.R
+# src/04-event-handler.R
 # Created December 2023
 # Last Updated December 2023
 
