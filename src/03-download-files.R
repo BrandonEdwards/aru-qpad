@@ -13,7 +13,6 @@ library(RSQLite)
 ####### Set Constants #############################
 
 aru_dir <- "data/raw/aru/BU_Public/"
-n_cores <- 5
 db <- DBI::dbConnect(RSQLite::SQLite(),
                      "data/generated/recordings.db")
 
