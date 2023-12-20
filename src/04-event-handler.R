@@ -12,8 +12,8 @@ library(RSQLite)
 
 ####### Set Constants #############################
 
-# db <- DBI::dbConnect(RSQLite::SQLite(),
-#                      "data/generated/recordings.db")
+db <- DBI::dbConnect(RSQLite::SQLite(),
+                     "data/generated/recordings.db")
 n_cores <- 5
 
 ####### Main Code #################################
@@ -27,12 +27,6 @@ while(run)
                     full.names = FALSE)
   events <- gsub(pattern = "_", replacement = " ", x = dirs)
   
-  #' Check for "DONE" events. I.e., once localization is finished, the directories
-  #' should be renamed DONE_event. If DONE events are in the directory, this event
-  #' should be removed from the events_being_processed list, thereby freeing up a space
-  #' for another event to be processed.
-  
-  
   for (e in events)
   {
     if (grepl(pattern = "DONE", x = e))
@@ -42,20 +36,32 @@ while(run)
       # move this directory to a "DONE" subdir?
       next
     }
+    
     if (e %in% events_being_processed)
     {
       next
-    }else
-    {
-      indices_available <- which(events_being_processed == "")
-      i <- min(indices_available)
-      events_being_processed[i] <- e
+    }else{
+      # Check if all files in event are downloaded
+      isDownloaded <- dbGetQuery(db,
+                                 paste0("SELECT isDownloaded FROM events WHERE Event = \"",
+                                 e,
+                                 "\""))[,1]
       
-      # Spawn new process that does the conversions and whatnot
+      if (all(as.logical(isDownloaded)))
+      {
+        indices_available <- which(events_being_processed == "")
+        
+        if (length(indices_available) != 0)
+        {
+          i <- min(indices_available)
+          events_being_processed[i] <- e   
+          
+          system(paste0("Rscript src/05-process-event.R ",
+                        gsub(pattern = " ", replacement = "_", x = e), 
+                        " &"))
+          
+        }
+      }
     }
   }
-  
-  
 }
-
-####### Output ####################################
