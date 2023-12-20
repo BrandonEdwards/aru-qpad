@@ -10,8 +10,6 @@
 library(DBI)
 library(RSQLite)
 
-source("src/functions/download-files.R")
-
 ####### Set Constants #############################
 
 aru_dir <- "data/raw/aru/BU_Public/"
@@ -26,7 +24,7 @@ events <- dbGetQuery(conn = db,
 
 ####### Main Code #################################
 
-for (e in events[1])
+for (e in events[1:10])
 {
   sr_temp <- dbGetQuery(db,
                         paste0("SELECT * FROM events WHERE Event = \"", e, "\""))

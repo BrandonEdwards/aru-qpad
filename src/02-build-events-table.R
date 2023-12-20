@@ -10,8 +10,6 @@
 library(DBI)
 library(RSQLite)
 
-source("src/functions/download-files.R")
-
 ####### Set Constants #############################
 
 db <- DBI::dbConnect(RSQLite::SQLite(),
@@ -31,7 +29,7 @@ stations_recordings <- merge(stations, recordings, by = "Station")
 
 # Create a unique key for each localization "event"
 stations_recordings$Event <- paste0(stations_recordings$Site, "-",
-                                    as.POSIXct(stations_recordings$Date))
+                                    as.POSIXct(stations_recordings$Date, origin = "1970-01-01"))
 
 # Filter out events that only have fewer than 4 receivers being used
 num_events <- as.data.frame(table(stations_recordings$Event))
