@@ -27,8 +27,21 @@ while(run)
                     full.names = FALSE)
   events <- gsub(pattern = "_", replacement = " ", x = dirs)
   
+  #' Check for "DONE" events. I.e., once localization is finished, the directories
+  #' should be renamed DONE_event. If DONE events are in the directory, this event
+  #' should be removed from the events_being_processed list, thereby freeing up a space
+  #' for another event to be processed.
+  
+  
   for (e in events)
   {
+    if (grepl(pattern = "DONE", x = e))
+    {
+      actual_event <- substr(e, start = 6, stop = nchar(e))
+      events_being_processed[which(events_being_processed == actual_event)] <- ""
+      # move this directory to a "DONE" subdir?
+      next
+    }
     if (e %in% events_being_processed)
     {
       next
@@ -37,6 +50,8 @@ while(run)
       indices_available <- which(events_being_processed == "")
       i <- min(indices_available)
       events_being_processed[i] <- e
+      
+      # Spawn new process that does the conversions and whatnot
     }
   }
   
