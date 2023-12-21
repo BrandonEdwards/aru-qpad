@@ -13,11 +13,18 @@ args <- commandArgs(trailingOnly=TRUE)
 
 ####### Main Code #################################
 
-print(args)
+message(paste0("Now processing event ", args))
 
-for (i in 1:1000000)
-{
-  a <- 5
-}
+
+
+# Check for conversion
+
+# Detect birds and output
+
+# Localize detected birds and output
+
+# Change directory to DONE, or add a DONE file to it
+
+
 
 ####### Output ####################################

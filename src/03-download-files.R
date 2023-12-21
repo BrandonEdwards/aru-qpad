@@ -13,20 +13,24 @@ library(RSQLite)
 ####### Set Constants #############################
 
 aru_dir <- "data/raw/aru/BU_Public/"
-db <- DBI::dbConnect(RSQLite::SQLite(),
-                     "data/generated/recordings.db")
 
 ####### Read Data #################################
 
+db <- DBI::dbConnect(RSQLite::SQLite(),
+                     "data/generated/recordings.db")
 events <- dbGetQuery(conn = db,
                      statement = "SELECT DISTINCT Event FROM events")[,1]
+dbDisconnect(db)
 
 ####### Main Code #################################
 
 for (e in events[1:10])
 {
+  db <- DBI::dbConnect(RSQLite::SQLite(),
+                       "data/generated/recordings.db")
   sr_temp <- dbGetQuery(db,
                         paste0("SELECT * FROM events WHERE Event = \"", e, "\""))
+  dbDisconnect(db)
   
   site <- unique(sr_temp$Site)
 
@@ -56,6 +60,8 @@ for (e in events[1:10])
                     " ",
                     new_filename))
       
+      db <- DBI::dbConnect(RSQLite::SQLite(),
+                           "data/generated/recordings.db")
       q <- dbExecute(conn = db,
                   statement = paste0("UPDATE events SET isDownloaded = 1 WHERE Event = \"", e, 
                                      "\" AND Station = \"", sr_temp$Station[i], "\""))
@@ -63,9 +69,7 @@ for (e in events[1:10])
                      statement = paste0("UPDATE events SET Local_File = \"", new_filename,
                                         "\" WHERE Event = \"", e, 
                                         "\" AND Station = \"", sr_temp$Station[i], "\""))
+      dbDisconnect(db)
     }
-    
   }
 }
-
-dbDisconnect(db)

@@ -10,11 +10,6 @@
 library(DBI)
 library(RSQLite)
 
-####### Set Constants #############################
-
-db <- DBI::dbConnect(RSQLite::SQLite(),
-                     "data/generated/recordings.db")
-
 ####### Read Data #################################
 
 stations <- dbGetQuery(conn = db,
@@ -40,6 +35,9 @@ stations_recordings_red <- stations_recordings[which(stations_recordings$Event %
 stations_recordings_red$Local_File <- NA
 
 ####### Output ####################################
+
+db <- DBI::dbConnect(RSQLite::SQLite(),
+                     "data/generated/recordings.db")
 
 DBI::dbWriteTable(conn = db,
                   name = "events",

@@ -12,8 +12,6 @@ library(RSQLite)
 
 ####### Set Constants #############################
 
-db <- DBI::dbConnect(RSQLite::SQLite(),
-                     "data/generated/recordings.db")
 n_cores <- 5
 
 ####### Main Code #################################
@@ -42,10 +40,13 @@ while(run)
       next
     }else{
       # Check if all files in event are downloaded
+      db <- DBI::dbConnect(RSQLite::SQLite(),
+                           "data/generated/recordings.db")
       isDownloaded <- dbGetQuery(db,
                                  paste0("SELECT isDownloaded FROM events WHERE Event = \"",
                                  e,
                                  "\""))[,1]
+      dbDisconnect(db)
       
       if (all(as.logical(isDownloaded)))
       {
@@ -59,7 +60,6 @@ while(run)
           system(paste0("Rscript src/05-process-event.R ",
                         gsub(pattern = " ", replacement = "_", x = e), 
                         " &"))
-          
         }
       }
     }
