@@ -3,7 +3,7 @@
 # aru-qpad
 # src/02-build-events-table.R
 # Created December 2023
-# Last Updated December 2023
+# Last Updated January 2024
 
 ####### Import Libraries and External Files #######
 
@@ -11,7 +11,8 @@ library(DBI)
 library(RSQLite)
 
 ####### Read Data #################################
-
+db <- DBI::dbConnect(RSQLite::SQLite(),
+                     "data/generated/recordings.db")
 stations <- dbGetQuery(conn = db,
                        statement = "SELECT * FROM stations")
 recordings <- dbGetQuery(conn = db,
